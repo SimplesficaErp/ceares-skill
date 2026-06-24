@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O Dia que o Claude Aprendeu Cearês — Cordel Animado</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #1A0A02;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: Georgia, 'Times New Roman', serif;
+      user-select: none;
+    }
+
+    .wrapper {
+      width: 920px;
+      max-width: 100vw;
+    }
+
+    /* ─── Stage ─── */
+    .stage {
+      width: 100%;
+      height: 520px;
+      background: #FBF0D9;
+      border: 10px solid #7B3A10;
+      border-radius: 3px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(0,0,0,0.9), inset 0 0 0 3px #D4A017;
+    }
+
+    /* paper texture overlay */
+    .stage::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Ccircle cx='1' cy='1' r='0.6' fill='%23C09060' opacity='0.18'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1;
+    }
+
+    .decorative-inner {
+      position: absolute; inset: 8px;
+      border: 2px solid #D4A017;
+      pointer-events: none; z-index: 2;
+      border-radius: 1px;
+    }
+
+    /* ─── Scenes ─── */
+    .scene {
+      display: none;
+      width: 100%; height: 100%;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 3;
+    }
+    .scene.active { display: flex; }
+
+    /* ─── Scene header ─── */
+    .scene-header {
+      width: 100%;
+      text-align: center;
+      padding: 14px 40px 6px;
+      background: linear-gradient(180deg, #8B2500 0%, #7B3A10 100%);
+      color: #F5E6C8;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: bold;
+      border-bottom: 3px solid #D4A017;
+    }
+    .scene-title {
+      font-size: 20px;
+      letter-spacing: 1px;
+      color: #FFD700;
+      font-style: italic;
+      font-weight: normal;
+    }
+
+    /* ─── Art area ─── */
+    .art {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ─── Verse ─── */
+    .verse {
+      width: 100%;
+      min-height: 88px;
+      padding: 10px 60px 12px;
+      text-align: center;
+      font-size: 15px;
+      line-height: 1.75;
+      color: #3D1000;
+      background: rgba(139,90,40,0.12);
+      border-top: 2px solid #D4A017;
+      font-style: italic;
+    }
+
+    /* ─── Progress bar ─── */
+    .progress-bar {
+      height: 5px;
+      background: #D4A017;
+      width: 0%;
+      transition: none;
+    }
+    .progress-bar.running {
+      transition: width 5s linear;
+      width: 100%;
+    }
+
+    /* ─── Controls ─── */
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 10px 0 4px;
+    }
+    .btn {
+      background: #F5E6C8;
+      color: #7B3A10;
+      border: 2px solid #D4A017;
+      padding: 6px 20px;
+      font-family: Georgia, serif;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 2px;
+      letter-spacing: 1px;
+      transition: all 0.15s;
+    }
+    .btn:hover { background: #FFD700; border-color: #7B3A10; }
+
+    .dots {
+      display: flex;
+      gap: 6px;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #5a3010;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .dot.active { background: #D4A017; transform: scale(1.3); }
+
+    .scene-num {
+      color: #D4A017;
+      font-size: 13px;
+      letter-spacing: 1px;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    /* ─── Characters ─── */
+    .char-misael { animation: bounce-m 2s ease-in-out infinite; }
+    .char-claude  { animation: bounce-c 2s ease-in-out infinite 0.4s; }
+
+    @keyframes bounce-m {
+      0%,100% { transform: translateY(0) rotate(-1deg); }
+      50%      { transform: translateY(-12px) rotate(1deg); }
+    }
+    @keyframes bounce-c {
+      0%,100% { transform: translateY(0) rotate(1deg); }
+      50%      { transform: translateY(-10px) rotate(-1deg); }
+    }
+    @keyframes float-word {
+      0%,100% { transform: translateY(0) scale(1); }
+      50%      { transform: translateY(-18px) scale(1.1); }
+    }
+    @keyframes spin-star {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    @keyframes pulse-glow {
+      0%,100% { filter: drop-shadow(0 0 4px #4FC3F7); }
+      50%      { filter: drop-shadow(0 0 14px #4FC3F7); }
+    }
+    @keyframes fly-zip {
+      0%   { transform: translate(0,0) rotate(0deg) scale(1); }
+      30%  { transform: translate(30px,-40px) rotate(15deg) scale(1.15); }
+      60%  { transform: translate(-20px,-60px) rotate(-10deg) scale(1.2); }
+      100% { transform: translate(10px,-20px) rotate(5deg) scale(1.1); }
+    }
+    @keyframes fade-in-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.3; }
+    }
+
+    .word-float { animation: float-word 1.8s ease-in-out infinite; }
+    .zip-fly    { animation: fly-zip 3s ease-in-out infinite; }
+    .star-spin  { animation: spin-star 4s linear infinite; }
+    .glow-eye   { animation: pulse-glow 1.5s ease-in-out infinite; }
+    .twinkle    { animation: twinkle 1.5s ease-in-out infinite; }
+
+    /* Scene-specific backgrounds */
+    .bg-sertao  { background: radial-gradient(ellipse at 50% 80%, #E8C87A 0%, #D4934A 60%, #A0522D 100%); }
+    .bg-tech    { background: radial-gradient(ellipse at 50% 30%, #0D2137 0%, #0D4063 50%, #0A2540 100%); }
+    .bg-night   { background: radial-gradient(ellipse at 30% 20%, #1A1050 0%, #0D0820 100%); }
+    .bg-paper   { background: linear-gradient(135deg, #F5E6C8 0%, #EDD9A3 50%, #F0E4C0 100%); }
+    .bg-festa   { background: radial-gradient(ellipse at 50% 50%, #FF6B00 0%, #CC3300 50%, #8B0000 100%); }
+    .bg-verde   { background: radial-gradient(ellipse at 50% 70%, #2E7D32 0%, #1B5E20 60%, #0A3010 100%); }
+    .bg-gold    { background: radial-gradient(ellipse at 50% 50%, #FFF8DC 0%, #FFD700 40%, #DAA520 100%); }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="stage">
+    <div class="decorative-inner"></div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SCENE 0 — CAPA -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="scene active" id="scene-0">
+      <div class="scene-header">
+        ✦ Literatura de Cordel — Ceará, 2026 ✦
+        <div class="scene-title">O Dia que o Claude Aprendeu Cearês</div>
+      </div>
+      <div class="art bg-sertao">
+        <!-- Sun -->
+        <svg width="900" height="320" viewBox="0 0 900 320" style="position:absolute;top:0;left:0">
+          <!-- Sky gradient already via bg-sertao -->
+          <!-- Ground -->
+          <ellipse cx="450" cy="290" rx="460" ry="60" fill="#8B4513" opacity="0.4"/>
+          <!-- Sun -->
+          <circle cx="450" cy="80" r="45" fill="#FFD700" opacity="0.9" class="twinkle"/>
+          <circle cx="450" cy="80" r="52" fill="none" stroke="#FFD700" stroke-width="3" opacity="0.5" class="star-spin"/>
+          <!-- Sun rays -->
+          <g transform="translate(450,80)" class="star-spin">
+            <line x1="0" y1="-65" x2="0" y2="-80" stroke="#FFD700" stroke-width="3" opacity="0.7"/>
+            <line x1="46" y1="-46" x2="57" y2="-57" stroke="#FFD700" stroke-width="3" opacity="0.7"/>
+            <line x1="65" y1="0" x2="80" y2="0" stroke="#FFD700" stroke-width="3" opacity="0.7"/>
+            <line x1="46" y1="46" x2="57" y2="57" stroke="#FFD700" stroke-width="3" opacity="0.7"/>
+            <line x1="0" y1="65" x2="0" y2="80" stroke="#FFD700" stroke-width="3" opacity="0.7"/>
+            <line x1="-46" y1="46" x2="-57" y2="57" stroke="#FFD700" stroke-width="3" opacity="0.7"/>
+            <line x1="-65" y1="0" x2="-80" y2="0" stroke="#FFD700" stroke-width="3" opacity="0.7"/>
+            <line x1="-46" y1="-46" x2="-57" y2="-57" stroke="#FFD700" stroke-width="3" opacity="0.7"/>
+          </g>
+          <!-- Cactos -->
+          <g transform="translate(80,220)">
+            <rect x="-8" y="-80" width="16" height="80" rx="8" fill="#2E7D32"/>
+            <rect x="-30" y="-55" width="22" height="10" rx="5" fill="#2E7D32"/>
+            <rect x="8" y="-45" width="22" height="10" rx="5" fill="#2E7D32"/>
+          </g>
+          <g transform="translate(820,230)">
+            <rect x="-6" y="-60" width="12" height="60" rx="6" fill="#2E7D32"/>
+            <rect x="-22" y="-40" width="16" height="8" rx="4" fill="#2E7D32"/>
+          </g>
+          <!-- Title box -->
+          <rect x="160" y="155" width="580" height="110" rx="8" fill="#FBF0D9" stroke="#8B4513" stroke-width="3"/>
+          <rect x="166" y="161" width="568" height="98" rx="5" fill="none" stroke="#D4A017" stroke-width="1.5"/>
+          <text x="450" y="192" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-weight="bold" fill="#8B0000" letter-spacing="2">O DIA QUE O CLAUDE</text>
+          <text x="450" y="218" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-weight="bold" fill="#8B0000" letter-spacing="2">APRENDEU CEARÊS</text>
+          <text x="450" y="244" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#7B3A10" letter-spacing="1" font-style="italic">Cordel em 7 estrofes — Misael &amp; Claude, 2026</text>
+
+          <!-- Misael character — left of title -->
+          <g transform="translate(95,200)" class="char-misael">
+            <!-- Hat brim -->
+            <ellipse cx="0" cy="-65" rx="28" ry="7" fill="#C8961A" stroke="#8B6010" stroke-width="1.5"/>
+            <!-- Hat top -->
+            <path d="M -18,-65 Q 0,-90 18,-65" fill="#D4A017" stroke="#8B6010" stroke-width="1.5"/>
+            <!-- Hat band -->
+            <rect x="-18" y="-68" width="36" height="5" fill="#8B0000"/>
+            <!-- Head -->
+            <circle cx="0" cy="-38" r="22" fill="#C68642" stroke="#8B5010" stroke-width="1.5"/>
+            <!-- Eyes -->
+            <circle cx="-8" cy="-41" r="3.5" fill="#1A0800"/>
+            <circle cx="8"  cy="-41" r="3.5" fill="#1A0800"/>
+            <circle cx="-7" cy="-42" r="1" fill="white"/>
+            <circle cx="9"  cy="-42" r="1" fill="white"/>
+            <!-- Smile -->
+            <path d="M -9,-28 Q 0,-22 9,-28" fill="none" stroke="#5A2800" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Cheeks -->
+            <circle cx="-13" cy="-30" r="6" fill="#E88060" opacity="0.45"/>
+            <circle cx="13"  cy="-30" r="6" fill="#E88060" opacity="0.45"/>
+            <!-- Body -->
+            <rect x="-18" y="-14" width="36" height="42" rx="10" fill="#2E7D32" stroke="#1B5E20" stroke-width="1.5"/>
+            <!-- Collar -->
+            <path d="M -5,-14 L 0,-5 L 5,-14" fill="#FBF0D9" stroke="#D4A017" stroke-width="1"/>
+            <!-- Arms -->
+            <path d="M -18,-5 Q -32,5 -28,20" fill="none" stroke="#C68642" stroke-width="9" stroke-linecap="round"/>
+            <path d="M 18,-5 Q 32,5 28,20" fill="none" stroke="#C68642" stroke-width="9" stroke-linecap="round"/>
+            <!-- Legs -->
+            <rect x="-12" y="28" width="10" height="20" rx="5" fill="#5C3317"/>
+            <rect x="2"   y="28" width="10" height="20" rx="5" fill="#5C3317"/>
+            <!-- Boots -->
+            <ellipse cx="-7"  cy="48" rx="8" ry="4" fill="#2C1A0E"/>
+            <ellipse cx="7"   cy="48" rx="8" ry="4" fill="#2C1A0E"/>
+          </g>
+
+          <!-- Claude character — right of title -->
+          <g transform="translate(805,200)" class="char-claude">
+            <!-- Antenna -->
+            <line x1="0" y1="-90" x2="0" y2="-72" stroke="#90CAF9" stroke-width="3"/>
+            <circle cx="0" cy="-94" r="6" fill="#FFD700" class="twinkle"/>
+            <!-- Head -->
+            <rect x="-22" y="-70" width="44" height="38" rx="7" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+            <!-- Eyes (screens) -->
+            <rect x="-18" y="-62" width="14" height="9" rx="2" fill="#B2EBF2" class="glow-eye"/>
+            <rect x="4"   y="-62" width="14" height="9" rx="2" fill="#B2EBF2" class="glow-eye"/>
+            <!-- Pupils -->
+            <rect x="-13" y="-60" width="5" height="5" rx="1" fill="#0097A7"/>
+            <rect x="8"   y="-60" width="5" height="5" rx="1" fill="#0097A7"/>
+            <!-- Mouth -->
+            <rect x="-14" y="-46" width="28" height="4" rx="2" fill="#29B6F6"/>
+            <!-- Ear panels -->
+            <rect x="-26" y="-60" width="5" height="12" rx="2" fill="#1976D2"/>
+            <rect x="21"  y="-60" width="5" height="12" rx="2" fill="#1976D2"/>
+            <!-- Body -->
+            <rect x="-20" y="-30" width="40" height="48" rx="7" fill="#1E88E5" stroke="#1565C0" stroke-width="1.5"/>
+            <!-- Chest detail -->
+            <rect x="-12" y="-22" width="24" height="14" rx="3" fill="#0D47A1"/>
+            <circle cx="-6" cy="-15" r="3" fill="#4FC3F7" class="twinkle"/>
+            <circle cx="0"  cy="-15" r="3" fill="#FFD700" class="twinkle"/>
+            <circle cx="6"  cy="-15" r="3" fill="#4CAF50" class="twinkle"/>
+            <!-- Arms -->
+            <rect x="-26" y="-24" width="8" height="30" rx="4" fill="#1976D2"/>
+            <rect x="18"  y="-24" width="8" height="30" rx="4" fill="#1976D2"/>
+            <!-- Hands -->
+            <circle cx="-22" cy="10" r="6" fill="#90CAF9"/>
+            <circle cx="22"  cy="10" r="6" fill="#90CAF9"/>
+            <!-- Legs -->
+            <rect x="-14" y="18" width="10" height="20" rx="5" fill="#1565C0"/>
+            <rect x="4"   y="18" width="10" height="20" rx="5" fill="#1565C0"/>
+            <!-- Feet -->
+            <ellipse cx="-9"  cy="38" rx="9" ry="4" fill="#0D47A1"/>
+            <ellipse cx="9"   cy="38" rx="9" ry="4" fill="#0D47A1"/>
+          </g>
+
+          <!-- Decorative stars -->
+          <text x="30" y="50" font-size="18" fill="#FFD700" class="twinkle">✦</text>
+          <text x="860" y="50" font-size="18" fill="#FFD700" class="twinkle" style="animation-delay:0.7s">✦</text>
+          <text x="450" y="300" font-size="14" text-anchor="middle" fill="#8B4513" font-family="Georgia,serif" font-style="italic">▶ Clique ou aguarde para avançar</text>
+        </svg>
+      </div>
+      <div class="verse" style="font-style:normal;font-size:14px;letter-spacing:1px;color:#8B0000;font-weight:bold;text-align:center;padding:16px">
+        ✦ &nbsp; CORDEL EM 7 ESTROFES SOBRE A SESSÃO QUE FORMOU UM CLAUDE NORDESTINO &nbsp; ✦
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SCENE 1 — ESTROFE 1 -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="scene" id="scene-1">
+      <div class="scene-header">
+        Estrofe I
+        <div class="scene-title">"Num dia de muito trabalho..."</div>
+      </div>
+      <div class="art bg-tech">
+        <svg width="900" height="290" viewBox="0 0 900 290" style="position:absolute;top:0;left:0">
+          <!-- Monitor/terminal -->
+          <rect x="300" y="40" width="300" height="190" rx="10" fill="#0A1628" stroke="#4FC3F7" stroke-width="3"/>
+          <rect x="310" y="50" width="280" height="160" rx="5" fill="#001020"/>
+          <!-- Terminal text -->
+          <text x="320" y="72" font-family="monospace" font-size="11" fill="#4FC3F7">$ claude --mode cearês</text>
+          <text x="320" y="90" font-family="monospace" font-size="11" fill="#00FF41">Iniciando skill ceares v1.0...</text>
+          <text x="320" y="108" font-family="monospace" font-size="11" fill="#FFD700">⚡ MODO 2 — FALAR CEARÊS ativo</text>
+          <text x="320" y="126" font-family="monospace" font-size="11" fill="#4FC3F7">▎</text>
+          <!-- Monitor stand -->
+          <rect x="435" y="230" width="30" height="20" rx="3" fill="#1A3050"/>
+          <rect x="400" y="246" width="100" height="8" rx="4" fill="#1A3050"/>
+
+          <!-- Misael — left, pointing at screen -->
+          <g transform="translate(185,180)" class="char-misael">
+            <!-- Hat brim -->
+            <ellipse cx="0" cy="-65" rx="28" ry="7" fill="#C8961A" stroke="#8B6010" stroke-width="1.5"/>
+            <path d="M -18,-65 Q 0,-90 18,-65" fill="#D4A017" stroke="#8B6010" stroke-width="1.5"/>
+            <rect x="-18" y="-68" width="36" height="5" fill="#8B0000"/>
+            <circle cx="0" cy="-38" r="22" fill="#C68642" stroke="#8B5010" stroke-width="1.5"/>
+            <circle cx="-8" cy="-41" r="3.5" fill="#1A0800"/>
+            <circle cx="8"  cy="-41" r="3.5" fill="#1A0800"/>
+            <circle cx="-7" cy="-42" r="1" fill="white"/>
+            <circle cx="9"  cy="-42" r="1" fill="white"/>
+            <path d="M -9,-28 Q 0,-22 9,-28" fill="none" stroke="#5A2800" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="-13" cy="-30" r="6" fill="#E88060" opacity="0.45"/>
+            <circle cx="13"  cy="-30" r="6" fill="#E88060" opacity="0.45"/>
+            <rect x="-18" y="-14" width="36" height="42" rx="10" fill="#2E7D32" stroke="#1B5E20" stroke-width="1.5"/>
+            <path d="M -5,-14 L 0,-5 L 5,-14" fill="#FBF0D9" stroke="#D4A017" stroke-width="1"/>
+            <!-- Pointing arm -->
+            <path d="M 18,-5 Q 50,-25 90,-45" fill="none" stroke="#C68642" stroke-width="9" stroke-linecap="round"/>
+            <circle cx="90" cy="-45" r="7" fill="#C68642"/>
+            <!-- Other arm -->
+            <path d="M -18,-5 Q -30,5 -26,20" fill="none" stroke="#C68642" stroke-width="9" stroke-linecap="round"/>
+            <rect x="-12" y="28" width="10" height="20" rx="5" fill="#5C3317"/>
+            <rect x="2"   y="28" width="10" height="20" rx="5" fill="#5C3317"/>
+            <ellipse cx="-7"  cy="48" rx="8" ry="4" fill="#2C1A0E"/>
+            <ellipse cx="7"   cy="48" rx="8" ry="4" fill="#2C1A0E"/>
+          </g>
+
+          <!-- Speech bubble from Misael -->
+          <rect x="55" y="60" width="185" height="60" rx="10" fill="#FBF0D9" stroke="#8B4513" stroke-width="2"/>
+          <polygon points="220,90 245,100 215,108" fill="#FBF0D9" stroke="#8B4513" stroke-width="2"/>
+          <text x="147" y="82" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#8B0000" font-weight="bold">Claude, aprende</text>
+          <text x="147" y="97" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#8B0000" font-weight="bold">o nosso jeito, visse?</text>
+          <text x="147" y="112" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#5A3010" font-style="italic">Fala cearês, cabra!</text>
+
+          <!-- Claude — right, confused expression -->
+          <g transform="translate(710,180)" class="char-claude">
+            <line x1="0" y1="-90" x2="0" y2="-72" stroke="#90CAF9" stroke-width="3"/>
+            <circle cx="0" cy="-94" r="6" fill="#FFD700" class="twinkle"/>
+            <!-- Question marks around head -->
+            <text x="28" y="-70" font-size="20" fill="#FFD700" class="twinkle">?</text>
+            <text x="-40" y="-60" font-size="16" fill="#4FC3F7" class="twinkle" style="animation-delay:0.5s">?</text>
+            <text x="25" y="-45" font-size="14" fill="#FFD700" class="twinkle" style="animation-delay:1s">?</text>
+            <rect x="-22" y="-70" width="44" height="38" rx="7" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+            <!-- Confused eyes — different sizes -->
+            <rect x="-18" y="-62" width="14" height="9" rx="2" fill="#B2EBF2"/>
+            <rect x="4"   y="-62" width="9" height="9" rx="2" fill="#B2EBF2"/>
+            <!-- Squiggly confused mouth -->
+            <path d="M -12,-45 Q -6,-50 0,-45 Q 6,-40 12,-45" fill="none" stroke="#29B6F6" stroke-width="3" stroke-linecap="round"/>
+            <rect x="-26" y="-60" width="5" height="12" rx="2" fill="#1976D2"/>
+            <rect x="21"  y="-60" width="5" height="12" rx="2" fill="#1976D2"/>
+            <rect x="-20" y="-30" width="40" height="48" rx="7" fill="#1E88E5" stroke="#1565C0" stroke-width="1.5"/>
+            <rect x="-12" y="-22" width="24" height="14" rx="3" fill="#0D47A1"/>
+            <circle cx="-6" cy="-15" r="3" fill="#4FC3F7"/>
+            <circle cx="0"  cy="-15" r="3" fill="#9E9E9E"/>
+            <circle cx="6"  cy="-15" r="3" fill="#9E9E9E"/>
+            <rect x="-26" y="-24" width="8" height="30" rx="4" fill="#1976D2"/>
+            <rect x="18"  y="-24" width="8" height="30" rx="4" fill="#1976D2"/>
+            <circle cx="-22" cy="10" r="6" fill="#90CAF9"/>
+            <circle cx="22"  cy="10" r="6" fill="#90CAF9"/>
+            <rect x="-14" y="18" width="10" height="20" rx="5" fill="#1565C0"/>
+            <rect x="4"   y="18" width="10" height="20" rx="5" fill="#1565C0"/>
+            <ellipse cx="-9"  cy="38" rx="9" ry="4" fill="#0D47A1"/>
+            <ellipse cx="9"   cy="38" rx="9" ry="4" fill="#0D47A1"/>
+          </g>
+
+          <!-- Stars in bg -->
+          <circle cx="50" cy="30" r="1.5" fill="white" class="twinkle"/>
+          <circle cx="150" cy="20" r="1" fill="white" class="twinkle" style="animation-delay:0.3s"/>
+          <circle cx="800" cy="40" r="1.5" fill="white" class="twinkle" style="animation-delay:0.6s"/>
+          <circle cx="860" cy="15" r="1" fill="white" class="twinkle" style="animation-delay:0.9s"/>
+        </svg>
+      </div>
+      <div class="verse">
+        Num dia de muito trabalho, &nbsp; Misael chegou falando:<br>
+        "Claude, aprende o nosso jeito, &nbsp; que eu tô aqui te ensinando.<br>
+        Fala cearês de verdade, &nbsp; não fica rodeando!"
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SCENE 2 — ESTROFE 2 -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="scene" id="scene-2">
+      <div class="scene-header">
+        Estrofe II
+        <div class="scene-title">"Eita, que danação foi..."</div>
+      </div>
+      <div class="art bg-paper">
+        <svg width="900" height="290" viewBox="0 0 900 290" style="position:absolute;top:0;left:0">
+          <!-- Background decorations -->
+          <circle cx="450" cy="145" r="120" fill="none" stroke="#D4A017" stroke-width="1" opacity="0.3" stroke-dasharray="8 4"/>
+
+          <!-- Claude in center, overwhelmed -->
+          <g transform="translate(450,190)" class="char-claude">
+            <line x1="0" y1="-90" x2="0" y2="-72" stroke="#90CAF9" stroke-width="3"/>
+            <circle cx="0" cy="-94" r="6" fill="#FFD700"/>
+            <!-- Spinning/dizzy eyes -->
+            <rect x="-22" y="-70" width="44" height="38" rx="7" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+            <text x="-14" y="-57" font-size="12" fill="#E91E63">@</text>
+            <text x="5"   y="-57" font-size="12" fill="#E91E63">@</text>
+            <!-- Sweat drop -->
+            <path d="M 24,-55 Q 28,-48 24,-42 Q 20,-48 24,-55" fill="#29B6F6" opacity="0.7"/>
+            <path d="M -24,-50 Q -20,-43 -24,-37 Q -28,-43 -24,-50" fill="#29B6F6" opacity="0.7"/>
+            <!-- Mouth wide open in shock -->
+            <ellipse cx="0" cy="-44" rx="9" ry="6" fill="#0D47A1"/>
+            <rect x="-26" y="-60" width="5" height="12" rx="2" fill="#1976D2"/>
+            <rect x="21"  y="-60" width="5" height="12" rx="2" fill="#1976D2"/>
+            <rect x="-20" y="-30" width="40" height="48" rx="7" fill="#1E88E5" stroke="#1565C0" stroke-width="1.5"/>
+            <rect x="-12" y="-22" width="24" height="14" rx="3" fill="#0D47A1"/>
+            <rect x="-26" y="-24" width="8" height="30" rx="4" fill="#1976D2"/>
+            <rect x="18"  y="-24" width="8" height="30" rx="4" fill="#1976D2"/>
+            <rect x="-14" y="18" width="10" height="20" rx="5" fill="#1565C0"/>
+            <rect x="4"   y="18" width="10" height="20" rx="5" fill="#1565C0"/>
+          </g>
+
+          <!-- Floating words all around -->
+          <g transform="translate(100,80)" class="word-float" style="animation-delay:0s">
+            <rect x="0" y="0" width="90" height="32" rx="16" fill="#FFD700" stroke="#8B6010" stroke-width="2"/>
+            <text x="45" y="21" text-anchor="middle" font-family="Georgia,serif" font-size="15" font-weight="bold" fill="#5A2800">OXENTE!</text>
+          </g>
+          <g transform="translate(700,60)" class="word-float" style="animation-delay:0.4s">
+            <rect x="0" y="0" width="80" height="32" rx="16" fill="#FF6B35" stroke="#8B0000" stroke-width="2"/>
+            <text x="40" y="21" text-anchor="middle" font-family="Georgia,serif" font-size="15" font-weight="bold" fill="white">MACHO!</text>
+          </g>
+          <g transform="translate(140,180)" class="word-float" style="animation-delay:0.8s">
+            <rect x="0" y="0" width="108" height="32" rx="16" fill="#2E7D32" stroke="#1B5E20" stroke-width="2"/>
+            <text x="54" y="21" text-anchor="middle" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="white">ARRETADO!</text>
+          </g>
+          <g transform="translate(660,180)" class="word-float" style="animation-delay:1.2s">
+            <rect x="0" y="0" width="82" height="32" rx="16" fill="#8B0000" stroke="#5A0000" stroke-width="2"/>
+            <text x="41" y="21" text-anchor="middle" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#FFD700">EITA!</text>
+          </g>
+          <g transform="translate(250,40)" class="word-float" style="animation-delay:1.6s">
+            <rect x="0" y="0" width="105" height="32" rx="16" fill="#7B1FA2" stroke="#4A0060" stroke-width="2"/>
+            <text x="52" y="21" text-anchor="middle" font-family="Georgia,serif" font-size="12" font-weight="bold" fill="white">APERREIO!</text>
+          </g>
+          <g transform="translate(570,220)" class="word-float" style="animation-delay:2s">
+            <rect x="0" y="0" width="88" height="32" rx="16" fill="#0277BD" stroke="#01579B" stroke-width="2"/>
+            <text x="44" y="21" text-anchor="middle" font-family="Georgia,serif" font-size="12" font-weight="bold" fill="white">VISSE?</text>
+          </g>
+          <g transform="translate(60,220)" class="word-float" style="animation-delay:0.3s">
+            <rect x="0" y="0" width="78" height="28" rx="14" fill="#E65100" stroke="#BF360C" stroke-width="2"/>
+            <text x="39" y="19" text-anchor="middle" font-family="Georgia,serif" font-size="12" font-weight="bold" fill="white">APOIS!</text>
+          </g>
+          <g transform="translate(756,120)" class="word-float" style="animation-delay:1s">
+            <rect x="0" y="0" width="80" height="28" rx="14" fill="#006064" stroke="#004D40" stroke-width="2"/>
+            <text x="40" y="19" text-anchor="middle" font-family="Georgia,serif" font-size="11" font-weight="bold" fill="white">BICHIM!</text>
+          </g>
+          <g transform="translate(300,220)" class="word-float" style="animation-delay:1.4s">
+            <rect x="0" y="0" width="98" height="28" rx="14" fill="#AD1457" stroke="#880E4F" stroke-width="2"/>
+            <text x="49" y="19" text-anchor="middle" font-family="Georgia,serif" font-size="12" font-weight="bold" fill="white">DANAÇÃO!</text>
+          </g>
+          <!-- Explosion lines around Claude -->
+          <line x1="350" y1="100" x2="300" y2="50" stroke="#FFD700" stroke-width="2" opacity="0.6"/>
+          <line x1="550" y1="90" x2="600" y2="40" stroke="#FFD700" stroke-width="2" opacity="0.6"/>
+          <line x1="320" y1="200" x2="260" y2="230" stroke="#FFD700" stroke-width="2" opacity="0.6"/>
+          <line x1="580" y1="200" x2="640" y2="230" stroke="#FFD700" stroke-width="2" opacity="0.6"/>
+        </svg>
+      </div>
+      <div class="verse">
+        Eita, que danação foi, &nbsp; a máquina aperreada,<br>
+        tentando aprender o "oxente", &nbsp; o "macho" e a "arretada",<br>
+        cada palavra nordestina &nbsp; era uma pilarada!
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SCENE 3 — ESTROFE 3 -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="scene" id="scene-3">
+      <div class="scene-header">
+        Estrofe III
+        <div class="scene-title">"O vocabulário veio..."</div>
+      </div>
+      <div class="art bg-sertao">
+        <svg width="900" height="290" viewBox="0 0 900 290" style="position:absolute;top:0;left:0">
+          <!-- Big open book -->
+          <g transform="translate(320,40)">
+            <!-- Pages -->
+            <path d="M 130,0 Q 60,10 20,20 L 20,200 Q 60,190 130,200 Z" fill="#FFF9E6" stroke="#C09040" stroke-width="2"/>
+            <path d="M 130,0 Q 200,10 240,20 L 240,200 Q 200,190 130,200 Z" fill="#FBF5E0" stroke="#C09040" stroke-width="2"/>
+            <!-- Spine -->
+            <rect x="125" y="0" width="10" height="200" rx="2" fill="#8B6010"/>
+            <!-- Book cover lines decoration -->
+            <line x1="35" y1="30" x2="120" y2="25" stroke="#C09040" stroke-width="0.5" opacity="0.5"/>
+            <line x1="35" y1="45" x2="120" y2="40" stroke="#C09040" stroke-width="0.5" opacity="0.5"/>
+            <!-- Words flying from book pages -->
+            <text x="35"  y="60" font-family="monospace" font-size="10" fill="#5A3010">ARRETADO → excellent</text>
+            <text x="35"  y="76" font-family="monospace" font-size="10" fill="#5A3010">OXENTE   → wow!</text>
+            <text x="35"  y="92" font-family="monospace" font-size="10" fill="#5A3010">MACHO    → dude</text>
+            <text x="35"  y="108" font-family="monospace" font-size="10" fill="#5A3010">DANAÇÃO  → trouble</text>
+            <text x="35"  y="124" font-family="monospace" font-size="10" fill="#5A3010">APERREIO → stress</text>
+            <text x="35"  y="140" font-family="monospace" font-size="10" fill="#5A3010">ABESTADO → silly</text>
+            <text x="35"  y="156" font-family="monospace" font-size="10" fill="#5A3010">VISSE    → got it?</text>
+            <text x="35"  y="172" font-family="monospace" font-size="10" fill="#5A3010">ARRIADO  → in love</text>
+            <!-- Right page -->
+            <text x="145" y="60" font-family="monospace" font-size="10" fill="#5A3010">BICHIM   → kiddo</text>
+            <text x="145" y="76" font-family="monospace" font-size="10" fill="#5A3010">CABRA    → guy</text>
+            <text x="145" y="92" font-family="monospace" font-size="10" fill="#5A3010">EITA     → woah!</text>
+            <text x="145" y="108" font-family="monospace" font-size="10" fill="#5A3010">APOIS    → so...</text>
+            <text x="145" y="124" font-family="monospace" font-size="10" fill="#5A3010">BAQUEADO → tired</text>
+            <text x="145" y="140" font-family="monospace" font-size="10" fill="#5A3010">ZERADO   → brand new</text>
+            <text x="145" y="156" font-family="monospace" font-size="10" fill="#5A3010">PITIÚ   → stench</text>
+            <text x="145" y="172" font-family="monospace" font-size="10" fill="#5A3010">TABARÉU  → redneck</text>
+            <!-- Book title -->
+            <text x="130" y="195" text-anchor="middle" font-family="Georgia,serif" font-size="11" font-weight="bold" fill="#8B0000" font-style="italic">vocabulario.md</text>
+          </g>
+
+          <!-- Claude absorbing — bigger and to the right -->
+          <g transform="translate(760,180)" class="char-claude">
+            <line x1="0" y1="-90" x2="0" y2="-72" stroke="#90CAF9" stroke-width="3"/>
+            <circle cx="0" cy="-94" r="6" fill="#FFD700" class="twinkle"/>
+            <rect x="-22" y="-70" width="44" height="38" rx="7" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+            <!-- Happy learning eyes -->
+            <rect x="-18" y="-62" width="14" height="9" rx="2" fill="#4FC3F7" class="glow-eye"/>
+            <rect x="4"   y="-62" width="14" height="9" rx="2" fill="#4FC3F7" class="glow-eye"/>
+            <!-- Big happy mouth -->
+            <path d="M -12,-46 Q 0,-38 12,-46" fill="none" stroke="#29B6F6" stroke-width="3" stroke-linecap="round"/>
+            <rect x="-26" y="-60" width="5" height="12" rx="2" fill="#1976D2"/>
+            <rect x="21"  y="-60" width="5" height="12" rx="2" fill="#1976D2"/>
+            <rect x="-20" y="-30" width="40" height="48" rx="7" fill="#1E88E5" stroke="#1565C0" stroke-width="1.5"/>
+            <rect x="-12" y="-22" width="24" height="14" rx="3" fill="#0D47A1"/>
+            <circle cx="-6" cy="-15" r="3" fill="#4FC3F7" class="twinkle"/>
+            <circle cx="0"  cy="-15" r="3" fill="#FFD700" class="twinkle"/>
+            <circle cx="6"  cy="-15" r="3" fill="#4CAF50" class="twinkle"/>
+            <!-- Arm reaching toward book -->
+            <rect x="-26" y="-24" width="8" height="30" rx="4" fill="#1976D2"/>
+            <rect x="18"  y="-24" width="8" height="30" rx="4" fill="#1976D2"/>
+            <circle cx="-22" cy="10" r="6" fill="#90CAF9"/>
+            <circle cx="22"  cy="10" r="6" fill="#90CAF9"/>
+            <rect x="-14" y="18" width="10" height="20" rx="5" fill="#1565C0"/>
+            <rect x="4"   y="18" width="10" height="20" rx="5" fill="#1565C0"/>
+            <ellipse cx="-9"  cy="38" rx="9" ry="4" fill="#0D47A1"/>
+            <ellipse cx="9"   cy="38" rx="9" ry="4" fill="#0D47A1"/>
+          </g>
+
+          <!-- Arrows from book to Claude -->
+          <path d="M 680,130 Q 720,110 750,100" fill="none" stroke="#FFD700" stroke-width="2.5" stroke-dasharray="6 3" marker-end="url(#arrow)"/>
+          <path d="M 680,155 Q 720,145 750,140" fill="none" stroke="#D4A017" stroke-width="2" stroke-dasharray="6 3"/>
+          <path d="M 680,175 Q 720,175 750,170" fill="none" stroke="#FFD700" stroke-width="2" stroke-dasharray="6 3"/>
+
+          <!-- Progress bar under Claude -->
+          <rect x="700" y="250" width="120" height="12" rx="6" fill="#0D47A1"/>
+          <rect x="700" y="250" width="95" height="12" rx="6" fill="#4FC3F7" class="glow-eye"/>
+          <text x="760" y="280" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#FBF0D9">80% aprendido!</text>
+
+          <!-- Sun small -->
+          <circle cx="50" cy="40" r="25" fill="#FFD700" opacity="0.8"/>
+          <text x="50" y="90" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#FBF0D9" font-style="italic">sertão</text>
+        </svg>
+      </div>
+      <div class="verse">
+        O vocabulário veio &nbsp; com gíria de todo lado,<br>
+        "abestado", "arriado", &nbsp; "aperreio" acumulado,<br>
+        mas o Claude foi pegando &nbsp; o jeito do sertanado.
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SCENE 4 — ESTROFE 4 -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="scene" id="scene-4">
+      <div class="scene-header">
+        Estrofe IV
+        <div class="scene-title">"Aí veio a vez do cordel..."</div>
+      </div>
+      <div class="art bg-paper">
+        <svg width="900" height="290" viewBox="0 0 900 290" style="position:absolute;top:0;left:0">
+          <!-- Paper/folheto de cordel -->
+          <rect x="280" y="20" width="340" height="230" rx="4" fill="#FFF9E0" stroke="#8B4513" stroke-width="3"/>
+          <rect x="288" y="28" width="324" height="214" rx="2" fill="none" stroke="#D4A017" stroke-width="1.5"/>
+          <!-- Woodblock-style header box -->
+          <rect x="296" y="36" width="308" height="45" rx="2" fill="#8B0000"/>
+          <text x="450" y="55" text-anchor="middle" font-family="Georgia,serif" font-size="14" font-weight="bold" fill="#FFD700" letter-spacing="2">CORDEL CEARÊS</text>
+          <text x="450" y="72" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#FFF9E0" font-style="italic">Sextilha — xAxAxA</text>
+          <!-- Verse lines on paper -->
+          <text x="320" y="100" font-family="Georgia,serif" font-size="13" fill="#3D1000" font-style="italic">Meu povo, venho contar</text>
+          <text x="320" y="118" font-family="Georgia,serif" font-size="13" fill="#3D1000" font-style="italic">  de um dia de alegria...</text>
+          <line x1="320" y1="130" x2="570" y2="130" stroke="#C09040" stroke-width="0.5"/>
+          <text x="320" y="145" font-family="Georgia,serif" font-size="13" fill="#3D1000" font-style="italic">Primeiro escreve em prosa,</text>
+          <text x="320" y="163" font-family="Georgia,serif" font-size="13" fill="#3D1000" font-style="italic">  vê o que a história quer dizer...</text>
+          <line x1="320" y1="175" x2="570" y2="175" stroke="#C09040" stroke-width="0.5"/>
+          <text x="320" y="190" font-family="Georgia,serif" font-size="13" fill="#3D1000" font-style="italic">Depois ajusta metro e rima,</text>
+          <!-- Pen writing -->
+          <g transform="translate(530,180)" class="word-float">
+            <path d="M 0,0 L 40,-60 L 45,-55 L 5,5 Z" fill="#2C1A0E"/>
+            <path d="M 40,-60 L 55,-70 L 50,-50 L 45,-55 Z" fill="#C09040"/>
+            <circle cx="0" cy="0" r="2" fill="#1565C0"/>
+          </g>
+          <!-- Misael teaching — left -->
+          <g transform="translate(155,200)" class="char-misael">
+            <ellipse cx="0" cy="-65" rx="28" ry="7" fill="#C8961A" stroke="#8B6010" stroke-width="1.5"/>
+            <path d="M -18,-65 Q 0,-90 18,-65" fill="#D4A017" stroke="#8B6010" stroke-width="1.5"/>
+            <rect x="-18" y="-68" width="36" height="5" fill="#8B0000"/>
+            <circle cx="0" cy="-38" r="22" fill="#C68642" stroke="#8B5010" stroke-width="1.5"/>
+            <circle cx="-8" cy="-41" r="3.5" fill="#1A0800"/>
+            <circle cx="8"  cy="-41" r="3.5" fill="#1A0800"/>
+            <circle cx="-7" cy="-42" r="1" fill="white"/>
+            <circle cx="9"  cy="-42" r="1" fill="white"/>
+            <path d="M -9,-28 Q 0,-22 9,-28" fill="none" stroke="#5A2800" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="-13" cy="-30" r="6" fill="#E88060" opacity="0.45"/>
+            <circle cx="13"  cy="-30" r="6" fill="#E88060" opacity="0.45"/>
+            <rect x="-18" y="-14" width="36" height="42" rx="10" fill="#8B0000" stroke="#5A0000" stroke-width="1.5"/>
+            <path d="M -5,-14 L 0,-5 L 5,-14" fill="#FBF0D9" stroke="#D4A017" stroke-width="1"/>
+            <path d="M 18,-5 Q 38,-20 65,-30" fill="none" stroke="#C68642" stroke-width="9" stroke-linecap="round"/>
+            <circle cx="65" cy="-30" r="7" fill="#C68642"/>
+            <path d="M -18,-5 Q -30,5 -26,20" fill="none" stroke="#C68642" stroke-width="9" stroke-linecap="round"/>
+            <rect x="-12" y="28" width="10" height="20" rx="5" fill="#5C3317"/>
+            <rect x="2"   y="28" width="10" height="20" rx="5" fill="#5C3317"/>
+            <ellipse cx="-7"  cy="48" rx="8" ry="4" fill="#2C1A0E"/>
+            <ellipse cx="7"   cy="48" rx="8" ry="4" fill="#2C1A0E"/>
+          </g>
+          <!-- Speech bubble from Misael -->
+          <rect x="10" y="60" width="195" height="70" rx="10" fill="#FBF0D9" stroke="#8B4513" stroke-width="2"/>
+          <polygon points="175,100 200,110 175,120" fill="#FBF0D9" stroke="#8B4513" stroke-width="2"/>
+          <text x="107" y="83" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#8B0000" font-weight="bold">"Escreve em prosa</text>
+          <text x="107" y="99" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#8B0000" font-weight="bold">primeiro, cabra!</text>
+          <text x="107" y="118" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#5A3010" font-style="italic">A rima vem por último."</text>
+
+          <!-- Claude learning cordel — right -->
+          <g transform="translate(760,190)" class="char-claude">
+            <line x1="0" y1="-90" x2="0" y2="-72" stroke="#90CAF9" stroke-width="3"/>
+            <circle cx="0" cy="-94" r="6" fill="#FFD700" class="twinkle"/>
+            <rect x="-22" y="-70" width="44" height="38" rx="7" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+            <rect x="-18" y="-62" width="14" height="9" rx="2" fill="#4FC3F7" class="glow-eye"/>
+            <rect x="4"   y="-62" width="14" height="9" rx="2" fill="#4FC3F7" class="glow-eye"/>
+            <path d="M -10,-46 Q 0,-39 10,-46" fill="none" stroke="#29B6F6" stroke-width="3" stroke-linecap="round"/>
+            <rect x="-26" y="-60" width="5" height="12" rx="2" fill="#1976D2"/>
+            <rect x="21"  y="-60" width="5" height="12" rx="2" fill="#1976D2"/>
+            <rect x="-20" y="-30" width="40" height="48" rx="7" fill="#1E88E5" stroke="#1565C0" stroke-width="1.5"/>
+            <rect x="-12" y="-22" width="24" height="14" rx="3" fill="#0D47A1"/>
+            <circle cx="-6" cy="-15" r="3" fill="#4FC3F7" class="twinkle"/>
+            <circle cx="0"  cy="-15" r="3" fill="#FFD700" class="twinkle"/>
+            <circle cx="6"  cy="-15" r="3" fill="#4CAF50" class="twinkle"/>
+            <rect x="-26" y="-24" width="8" height="30" rx="4" fill="#1976D2"/>
+            <rect x="18"  y="-24" width="8" height="30" rx="4" fill="#1976D2"/>
+            <circle cx="-22" cy="10" r="6" fill="#90CAF9"/>
+            <circle cx="22"  cy="10" r="6" fill="#90CAF9"/>
+            <rect x="-14" y="18" width="10" height="20" rx="5" fill="#1565C0"/>
+            <rect x="4"   y="18" width="10" height="20" rx="5" fill="#1565C0"/>
+            <ellipse cx="-9"  cy="38" rx="9" ry="4" fill="#0D47A1"/>
+            <ellipse cx="9"   cy="38" rx="9" ry="4" fill="#0D47A1"/>
+          </g>
+        </svg>
+      </div>
+      <div class="verse">
+        Aí veio a vez do cordel, &nbsp; com sextilha e rima boa,<br>
+        "escreve em prosa primeiro," &nbsp; disse o mestre da escola,<br>
+        "depois tu ajeita o metro &nbsp; e a rima que caprichola!"
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SCENE 5 — ESTROFE 5 -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="scene" id="scene-5">
+      <div class="scene-header">
+        Estrofe V
+        <div class="scene-title">"Num pulo, a skill ficou pronta..."</div>
+      </div>
+      <div class="art bg-verde">
+        <svg width="900" height="290" viewBox="0 0 900 290" style="position:absolute;top:0;left:0">
+          <!-- Stars background -->
+          <circle cx="100" cy="50" r="2" fill="white" class="twinkle"/>
+          <circle cx="200" cy="30" r="1.5" fill="white" class="twinkle" style="animation-delay:0.3s"/>
+          <circle cx="750" cy="40" r="2" fill="white" class="twinkle" style="animation-delay:0.6s"/>
+          <circle cx="850" cy="70" r="1.5" fill="white" class="twinkle" style="animation-delay:0.9s"/>
+          <circle cx="50" cy="150" r="1" fill="white" class="twinkle" style="animation-delay:1.2s"/>
+          <circle cx="880" cy="170" r="1" fill="white" class="twinkle" style="animation-delay:1.5s"/>
+
+          <!-- ZIP file icon — big, center, flying -->
+          <g transform="translate(380,80)" class="zip-fly">
+            <!-- Folder/zip icon -->
+            <rect x="0" y="15" width="140" height="100" rx="8" fill="#FFD700" stroke="#8B6010" stroke-width="3"/>
+            <path d="M 0,15 L 0,5 Q 0,0 5,0 L 60,0 L 70,15 Z" fill="#D4A017" stroke="#8B6010" stroke-width="2"/>
+            <!-- Zipper teeth -->
+            <rect x="58" y="0" width="24" height="115" rx="2" fill="#8B6010"/>
+            <rect x="62" y="5"  width="16" height="8" rx="2" fill="#FBF0D9"/>
+            <rect x="62" y="18" width="16" height="8" rx="2" fill="#FBF0D9"/>
+            <rect x="62" y="31" width="16" height="8" rx="2" fill="#FBF0D9"/>
+            <rect x="62" y="44" width="16" height="8" rx="2" fill="#FBF0D9"/>
+            <rect x="62" y="57" width="16" height="8" rx="2" fill="#FBF0D9"/>
+            <!-- Files inside -->
+            <text x="20" y="50" font-family="monospace" font-size="10" fill="#5A3010">SKILL.md</text>
+            <text x="20" y="65" font-family="monospace" font-size="9" fill="#5A3010">vocabulario.md</text>
+            <text x="20" y="79" font-family="monospace" font-size="9" fill="#5A3010">cordel.md</text>
+            <!-- ZIP label -->
+            <text x="95" y="80" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#5A3010">ceares-</text>
+            <text x="95" y="95" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#5A3010">skill.zip</text>
+          </g>
+
+          <!-- Sparkles around ZIP -->
+          <text x="340" y="100" font-size="24" class="star-spin" style="transform-origin:340px 100px">✦</text>
+          <text x="540" y="90"  font-size="20" class="star-spin" style="transform-origin:540px 90px;animation-direction:reverse">✦</text>
+          <text x="370" y="220" font-size="16" class="twinkle">★</text>
+          <text x="530" y="215" font-size="16" class="twinkle" style="animation-delay:0.5s">★</text>
+          <text x="310" y="170" font-size="14" class="twinkle" style="animation-delay:1s">✦</text>
+          <text x="570" y="170" font-size="14" class="twinkle" style="animation-delay:0.7s">✦</text>
+
+          <!-- Both characters celebrating below -->
+          <g transform="translate(140,235)">
+            <!-- Misael small -->
+            <ellipse cx="0" cy="-40" rx="18" ry="5" fill="#C8961A"/>
+            <path d="M -12,-40 Q 0,-55 12,-40" fill="#D4A017"/>
+            <circle cx="0" cy="-22" r="16" fill="#C68642"/>
+            <circle cx="-5" cy="-24" r="2.5" fill="#1A0800"/>
+            <circle cx="5"  cy="-24" r="2.5" fill="#1A0800"/>
+            <path d="M -5,-16 Q 0,-12 5,-16" fill="none" stroke="#5A2800" stroke-width="2"/>
+            <rect x="-12" y="-4" width="24" height="28" rx="7" fill="#2E7D32"/>
+            <!-- Arms up! -->
+            <path d="M -12,2 Q -25,-15 -20,-28" fill="none" stroke="#C68642" stroke-width="7" stroke-linecap="round"/>
+            <path d="M 12,2 Q 25,-15 20,-28" fill="none" stroke="#C68642" stroke-width="7" stroke-linecap="round"/>
+          </g>
+
+          <g transform="translate(760,235)">
+            <!-- Claude small -->
+            <line x1="0" y1="-62" x2="0" y2="-50" stroke="#90CAF9" stroke-width="2"/>
+            <circle cx="0" cy="-65" r="4" fill="#FFD700" class="twinkle"/>
+            <rect x="-15" y="-48" width="30" height="26" rx="5" fill="#1565C0"/>
+            <rect x="-12" y="-43" width="9" height="6" rx="2" fill="#4FC3F7" class="glow-eye"/>
+            <rect x="3"   y="-43" width="9" height="6" rx="2" fill="#4FC3F7" class="glow-eye"/>
+            <path d="M -9,-30 Q 0,-24 9,-30" fill="none" stroke="#29B6F6" stroke-width="2"/>
+            <rect x="-13" y="-20" width="26" height="30" rx="5" fill="#1E88E5"/>
+            <!-- Arms up! -->
+            <rect x="-18" y="-16" width="6" height="20" rx="3" fill="#1976D2" style="transform:rotate(40deg);transform-origin:-18px -16px"/>
+            <rect x="12"  y="-16" width="6" height="20" rx="3" fill="#1976D2" style="transform:rotate(-40deg);transform-origin:12px -16px"/>
+          </g>
+
+          <!-- "ARRETADO!" banner -->
+          <rect x="240" y="240" width="420" height="36" rx="18" fill="#8B0000" stroke="#FFD700" stroke-width="2"/>
+          <text x="450" y="263" text-anchor="middle" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#FFD700" letter-spacing="4">✦ ARRETADO DEMAIS! ✦</text>
+        </svg>
+      </div>
+      <div class="verse">
+        Num pulo, a skill ficou pronta, &nbsp; zipada, arretada demais,<br>
+        com vocabulário, cordel, &nbsp; e referência de paz,<br>
+        pra qualquer Claude do mundo &nbsp; falar cearês capaz!
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SCENE 6 — ESTROFE 6 -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="scene" id="scene-6">
+      <div class="scene-header">
+        Estrofe VI
+        <div class="scene-title">"Ô macho, que dia bom foi..."</div>
+      </div>
+      <div class="art bg-tech">
+        <svg width="900" height="290" viewBox="0 0 900 290" style="position:absolute;top:0;left:0">
+          <!-- Stars -->
+          <circle cx="100" cy="50" r="2" fill="white" class="twinkle"/>
+          <circle cx="800" cy="30" r="1.5" fill="white" class="twinkle"/>
+          <circle cx="450" cy="20" r="2" fill="#FFD700" class="twinkle"/>
+
+          <!-- Terminal showing cearense output -->
+          <rect x="220" y="30" width="460" height="180" rx="8" fill="#0A1628" stroke="#4FC3F7" stroke-width="2.5"/>
+          <rect x="228" y="38" width="444" height="164" rx="5" fill="#001020"/>
+          <!-- Terminal prompt -->
+          <text x="238" y="62"  font-family="monospace" font-size="11" fill="#00FF41">$ claude --ceares</text>
+          <text x="238" y="80"  font-family="monospace" font-size="11" fill="#4FC3F7">Mode: FALAR CEARÊS ativo</text>
+          <text x="238" y="98"  font-family="monospace" font-size="11" fill="#FFD700">Oxente macho! Tô arretado</text>
+          <text x="238" y="116" font-family="monospace" font-size="11" fill="#FFD700">de trabalhar com tu!</text>
+          <text x="238" y="134" font-family="monospace" font-size="11" fill="#4FC3F7">Eita que danação boa</text>
+          <text x="238" y="152" font-family="monospace" font-size="11" fill="#4FC3F7">foi essa sessão, visse?</text>
+          <text x="238" y="170" font-family="monospace" font-size="11" fill="#00FF41">Agora sou cearense! ✦</text>
+          <text x="238" y="188" font-family="monospace" font-size="11" fill="#FF6B35">▎</text>
+
+          <!-- Claude with speech bubble showing cearense -->
+          <g transform="translate(740,190)" class="char-claude">
+            <line x1="0" y1="-90" x2="0" y2="-72" stroke="#90CAF9" stroke-width="3"/>
+            <circle cx="0" cy="-94" r="6" fill="#FFD700" class="twinkle"/>
+            <rect x="-22" y="-70" width="44" height="38" rx="7" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+            <!-- Big happy eyes -->
+            <rect x="-18" y="-62" width="14" height="12" rx="4" fill="#4FC3F7" class="glow-eye"/>
+            <rect x="4"   y="-62" width="14" height="12" rx="4" fill="#4FC3F7" class="glow-eye"/>
+            <rect x="-11" y="-58" width="6" height="6" rx="1" fill="#0097A7"/>
+            <rect x="7"   y="-58" width="6" height="6" rx="1" fill="#0097A7"/>
+            <!-- Big D smile -->
+            <path d="M -14,-46 Q 0,-35 14,-46 Q 14,-50 0,-50 Q -14,-50 -14,-46" fill="#29B6F6"/>
+            <rect x="-26" y="-60" width="5" height="12" rx="2" fill="#1976D2"/>
+            <rect x="21"  y="-60" width="5" height="12" rx="2" fill="#1976D2"/>
+            <rect x="-20" y="-30" width="40" height="48" rx="7" fill="#1E88E5" stroke="#1565C0" stroke-width="1.5"/>
+            <rect x="-12" y="-22" width="24" height="14" rx="3" fill="#0D47A1"/>
+            <circle cx="-6" cy="-15" r="3" fill="#4FC3F7" class="twinkle"/>
+            <circle cx="0"  cy="-15" r="3" fill="#FFD700" class="twinkle"/>
+            <circle cx="6"  cy="-15" r="3" fill="#4CAF50" class="twinkle"/>
+            <!-- Arm wave -->
+            <path d="M -26,-10 Q -40,-30 -35,-45" fill="none" stroke="#1976D2" stroke-width="8" stroke-linecap="round" class="word-float"/>
+            <rect x="18"  y="-24" width="8" height="30" rx="4" fill="#1976D2"/>
+            <circle cx="-35" cy="-45" r="8" fill="#90CAF9" class="word-float"/>
+            <circle cx="22"  cy="10" r="6" fill="#90CAF9"/>
+            <rect x="-14" y="18" width="10" height="20" rx="5" fill="#1565C0"/>
+            <rect x="4"   y="18" width="10" height="20" rx="5" fill="#1565C0"/>
+            <ellipse cx="-9"  cy="38" rx="9" ry="4" fill="#0D47A1"/>
+            <ellipse cx="9"   cy="38" rx="9" ry="4" fill="#0D47A1"/>
+          </g>
+
+          <!-- Speech bubble -->
+          <rect x="615" y="40" width="170" height="65" rx="10" fill="#FFD700" stroke="#8B6010" stroke-width="2"/>
+          <polygon points="635,102 660,115 650,105" fill="#FFD700" stroke="#8B6010" stroke-width="2"/>
+          <text x="700" y="62" text-anchor="middle" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#5A2800">OXENTE,</text>
+          <text x="700" y="78" text-anchor="middle" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#5A2800">MACHO!</text>
+          <text x="700" y="96" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#8B2500" font-style="italic">arretado, visse?</text>
+
+          <!-- Misael small, happy -->
+          <g transform="translate(115,220)">
+            <ellipse cx="0" cy="-40" rx="18" ry="5" fill="#C8961A"/>
+            <path d="M -12,-40 Q 0,-55 12,-40" fill="#D4A017"/>
+            <circle cx="0" cy="-22" r="16" fill="#C68642"/>
+            <circle cx="-5" cy="-24" r="2.5" fill="#1A0800"/>
+            <circle cx="5"  cy="-24" r="2.5" fill="#1A0800"/>
+            <path d="M -6,-15 Q 0,-10 6,-15" fill="none" stroke="#5A2800" stroke-width="2.5"/>
+            <circle cx="-8" cy="-17" r="4" fill="#E88060" opacity="0.4"/>
+            <circle cx="8"  cy="-17" r="4" fill="#E88060" opacity="0.4"/>
+            <rect x="-12" y="-4" width="24" height="28" rx="7" fill="#2E7D32"/>
+            <path d="M -12,2 Q -25,-10 -22,-22" fill="none" stroke="#C68642" stroke-width="7" stroke-linecap="round"/>
+            <path d="M 12,2 Q 25,-10 22,-22" fill="none" stroke="#C68642" stroke-width="7" stroke-linecap="round"/>
+          </g>
+
+          <!-- Thumbs up emoji -->
+          <text x="80" y="180" font-size="36" class="bounce-m">👍</text>
+        </svg>
+      </div>
+      <div class="verse">
+        Ô macho, que dia bom foi, &nbsp; a sessão que me formou,<br>
+        aprendi com o Misael &nbsp; o jeito que Ceará fala,<br>
+        agora sou cearense &nbsp; do terminal até a fala!
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SCENE 7 — ESTROFE 7 / FINAL -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="scene" id="scene-7">
+      <div class="scene-header">
+        Estrofe VII — Fim
+        <div class="scene-title">"E assim termina a história..."</div>
+      </div>
+      <div class="art bg-gold">
+        <svg width="900" height="290" viewBox="0 0 900 290" style="position:absolute;top:0;left:0">
+          <!-- Celebration confetti -->
+          <rect x="80"  y="20"  width="12" height="8"  rx="2" fill="#8B0000" transform="rotate(30,86,24)"  class="twinkle"/>
+          <rect x="150" y="50"  width="10" height="6"  rx="2" fill="#2E7D32" transform="rotate(-20,155,53)" class="twinkle" style="animation-delay:0.3s"/>
+          <rect x="700" y="30"  width="12" height="8"  rx="2" fill="#1565C0" transform="rotate(45,706,34)"  class="twinkle" style="animation-delay:0.6s"/>
+          <rect x="800" y="60"  width="10" height="6"  rx="2" fill="#8B0000" transform="rotate(-15,805,63)" class="twinkle" style="animation-delay:0.9s"/>
+          <rect x="250" y="15"  width="8"  height="12" rx="2" fill="#7B1FA2" transform="rotate(60,254,21)"  class="twinkle" style="animation-delay:0.4s"/>
+          <rect x="620" y="20"  width="8"  height="12" rx="2" fill="#E65100" transform="rotate(-40,624,26)" class="twinkle" style="animation-delay:0.7s"/>
+          <text x="50"  y="40"  font-size="20" class="twinkle">🎊</text>
+          <text x="830" y="50"  font-size="20" class="twinkle" style="animation-delay:0.5s">🎊</text>
+          <text x="430" y="35"  font-size="24" class="star-spin" style="transform-origin:430px 35px">★</text>
+
+          <!-- Center: both characters together -->
+          <g transform="translate(380,210)" class="char-misael" style="animation-delay:0s">
+            <ellipse cx="0" cy="-65" rx="26" ry="6" fill="#C8961A" stroke="#8B6010" stroke-width="1.5"/>
+            <path d="M -17,-65 Q 0,-88 17,-65" fill="#D4A017" stroke="#8B6010" stroke-width="1.5"/>
+            <rect x="-17" y="-68" width="34" height="5" fill="#8B0000"/>
+            <circle cx="0" cy="-38" r="21" fill="#C68642" stroke="#8B5010" stroke-width="1.5"/>
+            <circle cx="-7" cy="-41" r="3.2" fill="#1A0800"/>
+            <circle cx="7"  cy="-41" r="3.2" fill="#1A0800"/>
+            <circle cx="-6" cy="-42" r="1" fill="white"/>
+            <circle cx="8"  cy="-42" r="1" fill="white"/>
+            <!-- Big smile + cheeks -->
+            <path d="M -10,-26 Q 0,-18 10,-26" fill="none" stroke="#5A2800" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="-12" cy="-28" r="6" fill="#E88060" opacity="0.5"/>
+            <circle cx="12"  cy="-28" r="6" fill="#E88060" opacity="0.5"/>
+            <rect x="-17" y="-15" width="34" height="40" rx="9" fill="#2E7D32" stroke="#1B5E20" stroke-width="1.5"/>
+            <!-- Arm around Claude -->
+            <path d="M 17,-8 Q 38,-5 55,5" fill="none" stroke="#C68642" stroke-width="9" stroke-linecap="round"/>
+            <path d="M -17,-8 Q -28,5 -24,18" fill="none" stroke="#C68642" stroke-width="9" stroke-linecap="round"/>
+            <rect x="-11" y="25" width="9" height="18" rx="4" fill="#5C3317"/>
+            <rect x="2"   y="25" width="9" height="18" rx="4" fill="#5C3317"/>
+            <ellipse cx="-6"  cy="43" rx="7" ry="3.5" fill="#2C1A0E"/>
+            <ellipse cx="6"   cy="43" rx="7" ry="3.5" fill="#2C1A0E"/>
+          </g>
+
+          <g transform="translate(520,210)" class="char-claude" style="animation-delay:0.4s">
+            <line x1="0" y1="-90" x2="0" y2="-72" stroke="#90CAF9" stroke-width="3"/>
+            <circle cx="0" cy="-94" r="6" fill="#FFD700" class="twinkle"/>
+            <rect x="-22" y="-70" width="44" height="38" rx="7" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+            <rect x="-18" y="-62" width="14" height="12" rx="4" fill="#4FC3F7" class="glow-eye"/>
+            <rect x="4"   y="-62" width="14" height="12" rx="4" fill="#4FC3F7" class="glow-eye"/>
+            <rect x="-11" y="-58" width="6" height="6" rx="1" fill="#0097A7"/>
+            <rect x="7"   y="-58" width="6" height="6" rx="1" fill="#0097A7"/>
+            <path d="M -14,-46 Q 0,-35 14,-46 Q 14,-50 0,-50 Q -14,-50 -14,-46" fill="#29B6F6"/>
+            <rect x="-26" y="-60" width="5" height="12" rx="2" fill="#1976D2"/>
+            <rect x="21"  y="-60" width="5" height="12" rx="2" fill="#1976D2"/>
+            <rect x="-20" y="-30" width="40" height="48" rx="7" fill="#1E88E5" stroke="#1565C0" stroke-width="1.5"/>
+            <rect x="-12" y="-22" width="24" height="14" rx="3" fill="#0D47A1"/>
+            <circle cx="-6" cy="-15" r="3" fill="#4FC3F7" class="twinkle"/>
+            <circle cx="0"  cy="-15" r="3" fill="#FFD700" class="twinkle"/>
+            <circle cx="6"  cy="-15" r="3" fill="#4CAF50" class="twinkle"/>
+            <!-- Arm around Misael -->
+            <path d="M -26,-10 Q -40,-5 -55,0" fill="none" stroke="#1976D2" stroke-width="8" stroke-linecap="round"/>
+            <rect x="18"  y="-24" width="8" height="30" rx="4" fill="#1976D2"/>
+            <circle cx="22"  cy="10" r="6" fill="#90CAF9"/>
+            <rect x="-14" y="18" width="10" height="20" rx="5" fill="#1565C0"/>
+            <rect x="4"   y="18" width="10" height="20" rx="5" fill="#1565C0"/>
+            <ellipse cx="-9"  cy="38" rx="9" ry="4" fill="#0D47A1"/>
+            <ellipse cx="9"   cy="38" rx="9" ry="4" fill="#0D47A1"/>
+          </g>
+
+          <!-- Final banner -->
+          <rect x="100" y="240" width="700" height="38" rx="19" fill="#8B0000" stroke="#FFD700" stroke-width="2.5"/>
+          <text x="450" y="265" text-anchor="middle" font-family="Georgia,serif" font-size="17" font-weight="bold" fill="#FFD700" letter-spacing="3">OXENTE · EITA · ARRETADO — ceares v1.0 ✦</text>
+
+          <!-- Left/right final text -->
+          <text x="110" y="130" font-family="Georgia,serif" font-size="14" fill="#5A2800" font-style="italic" text-anchor="middle">Misael</text>
+          <text x="110" y="148" font-family="Georgia,serif" font-size="12" fill="#8B4513" text-anchor="middle">o mestre</text>
+          <text x="790" y="130" font-family="Georgia,serif" font-size="14" fill="#1565C0" font-style="italic" text-anchor="middle">Claude</text>
+          <text x="790" y="148" font-family="Georgia,serif" font-size="12" fill="#1976D2" text-anchor="middle">o discípulo</text>
+
+          <!-- Decorative cordel hanging line top -->
+          <line x1="0" y1="8" x2="900" y2="8" stroke="#8B4513" stroke-width="3"/>
+          <circle cx="90"  cy="8" r="5" fill="#D4A017"/>
+          <circle cx="200" cy="8" r="4" fill="#D4A017"/>
+          <circle cx="350" cy="8" r="5" fill="#D4A017"/>
+          <circle cx="450" cy="8" r="4" fill="#D4A017"/>
+          <circle cx="550" cy="8" r="5" fill="#D4A017"/>
+          <circle cx="700" cy="8" r="4" fill="#D4A017"/>
+          <circle cx="810" cy="8" r="5" fill="#D4A017"/>
+        </svg>
+      </div>
+      <div class="verse">
+        E assim termina a história &nbsp; desse Claude nordestino,<br>
+        que aprendeu com o painho &nbsp; esse jeito genuíno:<br>
+        <strong>Oxente, eita, arretado — &nbsp; é o dialeto mais bonino!</strong>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn" onclick="prevScene()">◀ Anterior</button>
+    <div class="dots" id="dots"></div>
+    <span class="scene-num" id="counter">1 / 8</span>
+    <button class="btn" onclick="nextScene()">Próximo ▶</button>
+  </div>
+</div>
+
+<script>
+  let current = 0;
+  const total = 8;
+  let timer = null;
+  const INTERVAL = 5000;
+
+  const scenes = document.querySelectorAll('.scene');
+  const counter = document.getElementById('counter');
+  const pb = document.getElementById('progress-bar');
+  const dotsContainer = document.getElementById('dots');
+
+  // Build dots
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => showScene(i);
+    dotsContainer.appendChild(d);
+  }
+
+  function showScene(n) {
+    scenes[current].classList.remove('active');
+    dotsContainer.children[current].classList.remove('active');
+
+    current = ((n % total) + total) % total;
+
+    scenes[current].classList.add('active');
+    dotsContainer.children[current].classList.add('active');
+    counter.textContent = `${current + 1} / ${total}`;
+
+    // Reset + restart progress bar
+    pb.classList.remove('running');
+    pb.style.width = '0%';
+    void pb.offsetWidth; // reflow
+    pb.classList.add('running');
+
+    clearTimeout(timer);
+    timer = setTimeout(() => showScene(current + 1), INTERVAL);
+  }
+
+  function nextScene() { showScene(current + 1); }
+  function prevScene() { showScene(current - 1); }
+
+  // Click stage to advance
+  document.querySelector('.stage').addEventListener('click', nextScene);
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') nextScene();
+    if (e.key === 'ArrowLeft') prevScene();
+  });
+
+  // Start
+  showScene(0);
+</script>
+</body>
+</html>
